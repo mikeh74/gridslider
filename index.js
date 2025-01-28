@@ -7,6 +7,19 @@
  * 
  */
 
+const throttle = function(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
 function getNumberOfItems(collection) {
   return collection.length;
 }
@@ -100,7 +113,15 @@ function updatePager() {
   pagerItems.forEach(item => {
     item.addEventListener('click', function () {
       const i = this.getAttribute('data-item');
-      elements[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // elements[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // get left position of the element within the parent element
+      const left = elements[i].offsetLeft;
+      const parent = elements[i].parentElement;
+      parent.scrollTo({
+        left: left,
+        behavior: 'smooth'
+      });
     });
   });
 };
@@ -171,19 +192,23 @@ let isScrolling;
 
 const gliderGrid = document.querySelector('.glider-grid');
 
-gliderGrid.addEventListener('scroll', function () {
-  // console.log('Scrolling...');
-  // updateActivePage();
+// throttled scroll listener
+const throttledScrollHandler = throttle(handleScrollEnd, 50);
+gliderGrid.addEventListener('scroll', throttledScrollHandler);
 
-  // Clear our timeout throughout the scroll
-  window.clearTimeout(isScrolling);
+// gliderGrid.addEventListener('scroll', function () {
+//   // console.log('Scrolling...');
+//   // updateActivePage();
 
-  // Set a timeout to run after scrolling ends
-  isScrolling = setTimeout(function() {
-    // Run the function to handle scroll end
-    handleScrollEnd();
-  }, 500); // Adjust the timeout duration as needed
-});
+//   // Clear our timeout throughout the scroll
+//   window.clearTimeout(isScrolling);
+
+//   // Set a timeout to run after scrolling ends
+//   isScrolling = setTimeout(function() {
+//     // Run the function to handle scroll end
+//     handleScrollEnd();
+//   }, 500); // Adjust the timeout duration as needed
+// });
 
 function handleScrollEnd() {
   console.log('Scrolling has stopped.');
