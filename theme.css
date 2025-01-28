@@ -1,0 +1,56 @@
+:root {
+  --glider-spacing: 1rem;
+  --glider-top-padding: 0.5rem;
+  --glider-right-padding: calc((100% - 80rem) / 2 + 7.75rem);
+  --glider-bottom-padding: 0.5rem;
+  /* --slider-left-padding: calc((100% - 80rem) / 2 + 1rem); */
+  --glider-left-padding: 0;
+  --glider-peek: 0.5;
+  --glider-spacing: 1rem;
+}
+
+.glider {
+  position: relative;
+}
+.glider-grid {
+  display: grid;
+  grid-auto-columns: calc(100% / (2 + var(--glider-peek)) - var(--glider-spacing));
+  grid-gap: var(--glider-spacing);
+  grid-auto-flow: column;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 0.5rem;
+}
+@media (min-width: 576px) {
+  .glider-grid {
+    grid-auto-columns: 25.5263157895%;
+  }
+}
+@media (min-width: 768px) {
+  .glider-grid {
+    grid-auto-columns: 32.3333333333%;
+  }
+}
+@media (min-width: 992px) {
+  .glider-grid {
+    grid-auto-columns: 24%;
+  }
+}
+@media (min-width: 1200px) {
+  .glider-grid {
+    grid-auto-columns: 15.6666666667%;
+  }
+}
+.glider-grid-item {
+  /* width: 200px; */
+  height: auto;
+  scroll-snap-align: start;
+  background-color: aqua;
+  aspect-ratio: 9/16;
+}
+
+/*# sourceMappingURL=theme.css.map */
