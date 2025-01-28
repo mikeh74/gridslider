@@ -7,12 +7,6 @@
  * 
  */
 
-els = document.querySelectorAll('.glider-grid-item');
-
-els.forEach(el => {
-
-});
-
 function getNumberOfItems(collection) {
   return collection.length;
 }
@@ -60,22 +54,23 @@ function populatePager(collection) {
 function generatePagerLinks(collection) {
   const numberOfPages = getNumberOfPages(collection);
   let pagerLinks = [];
+  let scrollIndex = calculateScrollIndex(collection);
   for (let i = 0; i < numberOfPages; i++) {
-    pagerLinks.push(generatePagerLink(i));
+
+    pagerLinks.push(generatePagerLink(i, scrollIndex[i]));
     // pagerLinks += `<a href="#" class="pager-item">${i + 1}</a>`;
   }
   return pagerLinks;
 }
 
-function generatePagerLink(pageNumber) {
+function generatePagerLink(pageNumber, itemNumber) {
   const btn = document.createElement('button');
   btn.classList.add('pager-item');
   btn.textContent = pageNumber;
   btn.setAttribute('data-page', pageNumber);
+  btn.setAttribute('data-item', itemNumber);
   return btn;
 }
-
-console.log(getNumberOfItems(els));
 
 // debounce function
 function debounce(func, wait, immediate) {
@@ -104,15 +99,93 @@ function updatePager() {
   const pagerItems = document.querySelectorAll('.pager-item');
   pagerItems.forEach(item => {
     item.addEventListener('click', function () {
-      const page = this.getAttribute('data-page');
-      console.log('Page: ', page);
-      const scrollIndex = calculateScrollIndex(elements);
-      const scrollLocation = scrollIndex[page];
-      elements[scrollLocation].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const i = this.getAttribute('data-item');
+      elements[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
+};
+
+
+// function to check which page is active
+function updateActivePage() {
+
+  const elements = document.querySelectorAll('.glider-grid-item');
+  const scrollIndex = calculateScrollIndex(elements);
+
+  // run through scroll index from last to first
+  // if element is within viewport, set active page
+  for (let i = scrollIndex.length - 1; i >= 0; i--) {
+    if (_withinViewport(elements[scrollIndex[i]], gliderGrid)) {
+      setActivePage(i);
+      break;
+    }
+  }
+
+  // scrollIndex.forEach(index => {
+  //   console.log(elements[index].offsetLeft);
+  // });
+
+  // const scrollLocation = window.scrollX;
+  // const activePage = scrollIndex.findIndex(index => {
+  //   return scrollLocation >= elements[index].offsetLeft && scrollLocation < elements[index + 1].offsetLeft;
+  // });
+  // setActivePage(activePage);
+}
+
+function setActivePage(pageNumber) {
+  const pagerItems = document.querySelectorAll('.pager-item');
+  pagerItems.forEach(item => {
+    item.classList.remove('active');
+  });
+  pagerItems[pageNumber].classList.add('active');
+}
+
+
+// const _withinViewport = (element, parent) => {
+//   const elementRect = element.getBoundingClientRect();
+//   const parentRect = parent.getBoundingClientRect();
+
+//   return (
+//     elementRect.left >= parentRect.left &&
+//         elementRect.left <= parentRect.right
+//   );
+// };
+
+const _withinViewport = (element, parent) => {
+  const elementRect = element.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+
+  return (
+    elementRect.left >= parentRect.left &&
+    elementRect.right <= parentRect.right
+    // elementRect.top >= parentRect.top &&
+    // elementRect.bottom <= parentRect.bottom
+  );
 };
 
 window.addEventListener('load', function () {
   updatePager();
 });
+
+let isScrolling;
+
+const gliderGrid = document.querySelector('.glider-grid');
+
+gliderGrid.addEventListener('scroll', function () {
+  // console.log('Scrolling...');
+  // updateActivePage();
+
+  // Clear our timeout throughout the scroll
+  window.clearTimeout(isScrolling);
+
+  // Set a timeout to run after scrolling ends
+  isScrolling = setTimeout(function() {
+    // Run the function to handle scroll end
+    handleScrollEnd();
+  }, 500); // Adjust the timeout duration as needed
+});
+
+function handleScrollEnd() {
+  console.log('Scrolling has stopped.');
+  updateActivePage();
+}
