@@ -20,71 +20,6 @@ const throttle = function(func, limit) {
   };
 }
 
-function getNumberOfItems(collection) {
-  return collection.length;
-}
-
-function getNumberOfItemsFullyVisible(collection) {
-  const parentElement = collection[0].parentElement;
-  const computedStyle = getComputedStyle(parentElement);
-  const gapSize = parseInt(computedStyle.gap, 10);
-  const itemWidth = collection[0].offsetWidth + gapSize;
-  const containerWidth = collection[0].parentElement.offsetWidth;
-  return Math.floor((containerWidth + gapSize) / itemWidth);
-}
-
-function getNumberOfPages(collection) {
-  const totalItems = getNumberOfItems(collection);
-  const itemsFullyVisible = getNumberOfItemsFullyVisible(collection);
-  return Math.ceil(totalItems / itemsFullyVisible);
-}
-
-/**
- * This takes a collection of html elements, calculates the number of pages and generates the pager links
- * and also creates an index for the first element of each page to be used for scrolling
- * @param {*} collection 
- */
-function calculateScrollIndex(collection) {
-  const numberOfPages = getNumberOfPages(collection);
-  let scrollIndex = [];
-  for (let i = 0; i < numberOfPages; i++) {
-    scrollIndex.push(i * getNumberOfItemsFullyVisible(collection));
-  }
-  return scrollIndex;
-}
-
-
-function populatePager(collection) {
-  const pager = document.querySelector('.glider-pager');
-  pager.innerHTML = '';
-  const pagerLinks = generatePagerLinks(collection);
-  console.log(pagerLinks);
-  pagerLinks.forEach(link => {
-    pager.appendChild(link);
-  });
-}
-
-function generatePagerLinks(collection) {
-  const numberOfPages = getNumberOfPages(collection);
-  let pagerLinks = [];
-  let scrollIndex = calculateScrollIndex(collection);
-  for (let i = 0; i < numberOfPages; i++) {
-
-    pagerLinks.push(generatePagerLink(i, scrollIndex[i]));
-    // pagerLinks += `<a href="#" class="pager-item">${i + 1}</a>`;
-  }
-  return pagerLinks;
-}
-
-function generatePagerLink(pageNumber, itemNumber) {
-  const btn = document.createElement('button');
-  btn.classList.add('pager-item');
-  btn.textContent = pageNumber;
-  btn.setAttribute('data-page', pageNumber);
-  btn.setAttribute('data-item', itemNumber);
-  return btn;
-}
-
 // debounce function
 function debounce(func, wait, immediate) {
   let timeout;
@@ -101,77 +36,6 @@ function debounce(func, wait, immediate) {
   };
 }
 
-// screen resize event listener with debounce
-window.addEventListener('resize', debounce(function () {
-  updatePager();
-}, 250));
-
-function updatePager() {
-  const elements = document.querySelectorAll('.glider-grid-item');
-  populatePager(elements);
-  const pagerItems = document.querySelectorAll('.pager-item');
-  pagerItems.forEach(item => {
-    item.addEventListener('click', function () {
-      const i = this.getAttribute('data-item');
-      // elements[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // get left position of the element within the parent element
-      const left = elements[i].offsetLeft;
-      const parent = elements[i].parentElement;
-      parent.scrollTo({
-        left: left,
-        behavior: 'smooth'
-      });
-    });
-  });
-};
-
-
-// function to check which page is active
-function updateActivePage() {
-
-  const elements = document.querySelectorAll('.glider-grid-item');
-  const scrollIndex = calculateScrollIndex(elements);
-
-  // run through scroll index from last to first
-  // if element is within viewport, set active page
-  for (let i = scrollIndex.length - 1; i >= 0; i--) {
-    if (_withinViewport(elements[scrollIndex[i]], gliderGrid)) {
-      setActivePage(i);
-      break;
-    }
-  }
-
-  // scrollIndex.forEach(index => {
-  //   console.log(elements[index].offsetLeft);
-  // });
-
-  // const scrollLocation = window.scrollX;
-  // const activePage = scrollIndex.findIndex(index => {
-  //   return scrollLocation >= elements[index].offsetLeft && scrollLocation < elements[index + 1].offsetLeft;
-  // });
-  // setActivePage(activePage);
-}
-
-function setActivePage(pageNumber) {
-  const pagerItems = document.querySelectorAll('.pager-item');
-  pagerItems.forEach(item => {
-    item.classList.remove('active');
-  });
-  pagerItems[pageNumber].classList.add('active');
-}
-
-
-// const _withinViewport = (element, parent) => {
-//   const elementRect = element.getBoundingClientRect();
-//   const parentRect = parent.getBoundingClientRect();
-
-//   return (
-//     elementRect.left >= parentRect.left &&
-//         elementRect.left <= parentRect.right
-//   );
-// };
-
 const _withinViewport = (element, parent) => {
   const elementRect = element.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
@@ -179,38 +43,172 @@ const _withinViewport = (element, parent) => {
   return (
     elementRect.left >= parentRect.left &&
     elementRect.right <= parentRect.right
-    // elementRect.top >= parentRect.top &&
-    // elementRect.bottom <= parentRect.bottom
   );
 };
 
-window.addEventListener('load', function () {
-  updatePager();
-});
+/**
+ * Object factory function to create a glider object
+ * 
+ */
+const glider = {};
 
-let isScrolling;
+glider.init = function (element) {
 
-const gliderGrid = document.querySelector('.glider-grid');
+  this.glider = element;
+  this.grid = this.glider.querySelector('.glider-grid');
 
-// throttled scroll listener
-const throttledScrollHandler = throttle(handleScrollEnd, 50);
-gliderGrid.addEventListener('scroll', throttledScrollHandler);
+  this.pager = this.glider.querySelector('.glider-pager');
+  this.items =  this.grid.querySelectorAll('.glider-grid-item');
 
-// gliderGrid.addEventListener('scroll', function () {
-//   // console.log('Scrolling...');
-//   // updateActivePage();
+  this.initPager();
+  this.initScroll();
 
-//   // Clear our timeout throughout the scroll
-//   window.clearTimeout(isScrolling);
-
-//   // Set a timeout to run after scrolling ends
-//   isScrolling = setTimeout(function() {
-//     // Run the function to handle scroll end
-//     handleScrollEnd();
-//   }, 500); // Adjust the timeout duration as needed
-// });
-
-function handleScrollEnd() {
-  console.log('Scrolling has stopped.');
-  updateActivePage();
+  // this.scrollIndex = calculateScrollIndex(this.items);
+  // this.activePage = 0;
+  // this.initPager();
+  // this.initScroll();
 }
+
+glider.getNumberOfItems = function () {
+  return this.items.length;
+}
+
+glider.getNumberOfItemsFullyVisible = function () {
+  const computedStyle = getComputedStyle(this.grid);
+  const gapSize = parseInt(computedStyle.gap, 10);
+  const itemWidth = this.items[0].offsetWidth + gapSize;
+  const containerWidth = this.grid.offsetWidth;
+  return Math.floor((containerWidth + gapSize) / itemWidth);
+}
+
+glider.getNumberOfPages = function () {
+  const totalItems = this.getNumberOfItems();
+  const itemsFullyVisible = this.getNumberOfItemsFullyVisible();
+  return Math.ceil(totalItems / itemsFullyVisible);
+}
+
+glider.calculateScrollIndex = function () {
+  const numberOfPages = this.getNumberOfPages();
+  let scrollIndex = [];
+  for (let i = 0; i < numberOfPages; i++) {
+    scrollIndex.push(i * this.getNumberOfItemsFullyVisible());
+  }
+  return scrollIndex;
+}
+
+glider.populatePager = function () {  
+  this.pager.innerHTML = '';
+  const pagerLinks = this.generatePagerLinks();
+  pagerLinks.forEach(link => {
+    this.pager.appendChild(link);
+  });
+}
+
+glider.generatePagerLinks = function () {
+  const numberOfPages = this.getNumberOfPages();
+  let pagerLinks = [];
+  let scrollIndex = this.calculateScrollIndex();
+  for (let i = 0; i < numberOfPages; i++) {
+    pagerLinks.push(this.generatePagerLink(i, scrollIndex[i]));
+  }
+  return pagerLinks;
+}
+
+glider.generatePagerLink = function (pageNumber, itemNumber) {
+  const btn = document.createElement('button');
+  btn.classList.add('pager-item');
+  btn.textContent = pageNumber;
+  btn.setAttribute('data-page', pageNumber);
+  btn.setAttribute('data-item', itemNumber);
+  return btn;
+}
+
+glider.updatePager = function () {
+  const that = this;
+  this.populatePager();
+
+  const pagerItems = this.pager.querySelectorAll('.pager-item');
+  pagerItems.forEach(item => {
+    item.addEventListener('click', function () {
+      const i = item.getAttribute('data-item');
+      const left = that.items[i].offsetLeft;
+      const parent = that.items[i].parentElement;
+      parent.scrollTo({
+        left: left,
+        behavior: 'smooth'
+      });
+    });
+  });
+}
+
+glider.updateActivePage = function () {
+  const scrollIndex = this.calculateScrollIndex();
+
+  for (let i = scrollIndex.length - 1; i >= 0; i--) {
+    if (_withinViewport(this.items[scrollIndex[i]], this.grid)) {
+      this.setActivePage(i);
+      break;
+    }
+  }
+}
+
+glider.setActivePage = function (pageNumber) {
+  const pagerItems = this.pager.querySelectorAll('.pager-item');
+  pagerItems.forEach(item => {
+    item.classList.remove('active');
+  });
+  pagerItems[pageNumber].classList.add('active');
+}
+
+glider.initPager = function () {
+  const that = this;
+
+  window.addEventListener('resize', debounce(function () {
+    that.updatePager();
+    that.updateActivePage();
+  }, 250));
+
+  // this.populatePager();
+  this.updatePager();
+}
+
+
+glider.initScroll = function () {
+
+  const throttle = function(func, limit) {
+    let inThrottle;
+    return function() {
+      const args = arguments;
+      const context = this;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  }
+
+  const that = this;
+  const throttledScrollHandler = throttle(function(){
+    that.updateActivePage();
+  }, 50);
+  this.grid.addEventListener('scroll', throttledScrollHandler);
+}
+
+// glider.handleScrollEnd = function () {
+//   this.updateActivePage();
+// }
+
+/**
+ * Creates a pager object with the given slider.
+ * @param {Object} slider - The slider object to create the pager for.
+ * @return {Pager} - The pager object.
+ */
+const makeGlider = function(element) {
+  const obj = Object.create(glider);
+  obj.init(element);
+  return obj;
+};
+
+const slider = document.querySelector('.glider');
+const pager = makeGlider(slider);
