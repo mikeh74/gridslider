@@ -8,78 +8,14 @@
 
     <style>
 
-        :root {
-            --slider-spacing: 1rem;
-            --slider-top-padding: 0.5rem;
-            --slider-right-padding: calc((100% - 80rem) / 2 + 7.75rem);
-            --slider-bottom-padding: 0.5rem;
-            /* --slider-left-padding: calc((100% - 80rem) / 2 + 1rem); */
-            --slider-left-padding: 0;
-            --slider-peek: 0.5;
-            --slider-spacing: 1rem;
-        }
-
         .container {
-            width: 90w;
+            width: 90vw;
             max-width: 1200px;
             margin: auto;
             position: relative;
         }
 
-        .grid {
-            display: grid;
-            grid-auto-columns: calc(100% / (2 + var(--slider-peek)) - var(--slider-spacing));
-            /* padding: 10px; */
-            grid-gap: var(--slider-spacing);
-            grid-auto-flow: column;
-            overflow-x: scroll;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            -ms-overflow-style: none;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            padding: 0.5rem;
-            /* padding: var(--slider-top-padding) var(--slider-right-padding) var(--slider-bottom-padding) var(--slider-left-padding); */
-        }
-
-        @media (min-width: 576px) {
-            .grid {
-                /* grid-auto-columns: calc(100% / (3 + var(--slider-peek)) - var(--slider-spacing)); */
-                grid-auto-columns: calc(97% / 3);
-            }
-        }
-
-        @media (min-width: 768px) {
-            .grid {
-                /* grid-auto-columns: calc(100% / (4 + var(--slider-peek)) - var(--slider-spacing)); */
-                /* grid-auto-columns: calc(100% / (4 + var(--slider-peek)) - var(--slider-spacing)); */
-                grid-auto-columns: calc(96% / 4);
-            }
-        }
-
-        @media (min-width: 992px) {
-            .grid {
-                /* grid-auto-columns: calc(100% / (5 + var(--slider-peek)) - var(--slider-spacing)); */
-                /* grid-auto-columns: calc(100% / 5 - 1rem); */
-                grid-auto-columns: calc(95% / 5);
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .grid {
-                grid-auto-columns: calc(94%/6);
-            }
-        }
-
-        .grid-item {
-            /* width: 200px; */
-            height: auto;
-            scroll-snap-align: start;
-            background-color: aqua;
-            aspect-ratio: 9 / 16;
-        }
-
-        .grid img {
+        .glider img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -175,16 +111,19 @@
 <body>
 
     <div class="container">
-        <div class="grid">
-            <div class="grid-item">1</div>
-            <div class="grid-item">2</div>
-            <div class="grid-item">3</div>
-            <div class="grid-item">4</div>
-            <div class="grid-item">5</div>
-            <div class="grid-item">6</div>
-            <div class="grid-item">7</div>
-            <div class="grid-item">8</div>
-            <div class="grid-item">9</div>
+        <div class="glider">
+            <div class="glider-grid">
+                <div class="glider-grid-item">1</div>
+                <div class="glider-grid-item">2</div>
+                <div class="glider-grid-item">3</div>
+                <div class="glider-grid-item">4</div>
+                <div class="glider-grid-item">5</div>
+                <div class="glider-grid-item">6</div>
+                <div class="glider-grid-item">7</div>
+                <div class="glider-grid-item">8</div>
+                <div class="glider-grid-item">9</div>
+            </div>
+            <div class="glider-pager"></div>
         </div>
     </div>
 
