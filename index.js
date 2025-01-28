@@ -1,24 +1,3 @@
-// select all pager elements
-// const pagers = document.querySelectorAll('.glider-pager');
-
-// // loop through all pager elements
-// pagers.forEach(pager => {
-//   // select all pager items
-//   const pagerItems = pager.querySelectorAll('.pager-item');
-
-//   // loop through all pager items
-//   pagerItems.forEach(pagerItem => {
-//     // add click event to each pager item
-//     pagerItem.addEventListener('click', () => {
-//       // remove active class from all pager items
-//       pagerItems.forEach(item => item.classList.remove('active'));
-
-//       // add active class to clicked pager item
-//       pagerItem.classList.add('active');
-//     });
-//   });
-// });
-
 /**
  * Need to following functions:
  * - total number of items in the collection
@@ -116,12 +95,6 @@ function debounce(func, wait, immediate) {
 
 // screen resize event listener with debounce
 window.addEventListener('resize', debounce(function () {
-  console.log('Screen size changed');
-  console.log('Number of items: ', getNumberOfItems(els));
-  console.log('Number of items fully visible: ', getNumberOfItemsFullyVisible(els));
-  console.log('Number of pages: ', getNumberOfPages(els));
-  console.log('Pager links: ', generatePagerLinks(els));
-
   updatePager();
 }, 250));
 
@@ -132,7 +105,6 @@ function updatePager() {
   pagerItems.forEach(item => {
     item.addEventListener('click', function () {
       const page = this.getAttribute('data-page');
-      // elements[page].scrollIntoView({ behavior: 'smooth', block: 'start' });
       console.log('Page: ', page);
       const scrollIndex = calculateScrollIndex(elements);
       const scrollLocation = scrollIndex[page];
