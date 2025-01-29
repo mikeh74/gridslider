@@ -69,11 +69,11 @@ const _withinViewport = (element, parent, offset) => {
 
   // factor in the offset so that the element is considered within the viewport
   // even if it's slightly outside the viewport
-  const left = parentRect.left + offset;
-  const right = parentRect.right - offset;
+  // const left = parentRect.left + offset;
+  // const right = parentRect.right - offset;
 
   return (
-    elementRect.left >= parentRect.left &&
+    elementRect.left >= (parentRect.left - offset) &&
     elementRect.right <= parentRect.right
   );
 };
@@ -265,6 +265,9 @@ glider.onScrollEnd = function () {
 
 /**
  * Creates a pager object with the given slider.
+ * 
+ * Pass the slider object to the pager object to create the pager.
+ * 
  * @param {Object} slider - The slider object to create the pager for.
  * @return {Pager} - The pager object.
  */
@@ -279,3 +282,13 @@ const els = document.querySelectorAll('.glider');
 els.forEach(el => {
   makeGlider(el);
 });
+
+const initGlider = function ({sliderSelector='.glider'}) {
+  const els = document.querySelectorAll(sliderSelector);
+
+  els.forEach(el => {
+    makeGlider(el);
+  });
+}
+
+export default initGlider;
