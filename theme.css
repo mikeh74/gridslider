@@ -45,6 +45,11 @@
     grid-auto-columns: 15.6666666667%;
   }
 }
+@media (min-width: 992px) {
+  .glider-grid.glider-grid-6-cols {
+    grid-auto-columns: 32%;
+  }
+}
 .glider-grid-item {
   /* width: 200px; */
   height: auto;

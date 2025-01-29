@@ -141,6 +141,11 @@ glider.calculateScrollIndex = function () {
 glider.populatePager = function () {
   this.pager.innerHTML = '';
   const pagerLinks = this.generatePagerLinks();
+  // if we only have one page, don't show the pager
+  if (pagerLinks.length === 1) {
+    return;
+  }
+
   pagerLinks.forEach(link => {
     this.pager.appendChild(link);
   });
@@ -187,7 +192,20 @@ glider.updatePager = function () {
 glider.updateActivePage = function () {
   const scrollIndex = this.calculateScrollIndex();
 
-  for (let i = scrollIndex.length - 1; i >= 0; i--) {
+  // if the last element is in view, set the active page to the last page
+  if (_withinViewport(this.items[this.items.length - 1], this.grid, 16)) {
+    this.setActivePage(scrollIndex.length - 1);
+    return;
+  }
+
+  // for (let i = scrollIndex.length - 1; i >= 0; i--) {
+  //   if (_withinViewport(this.items[scrollIndex[i]], this.grid, 16)) {
+  //     this.setActivePage(i);
+  //     break;
+  //   }
+  // }
+
+  for (let i = 0; i < scrollIndex.length; i++) {
     if (_withinViewport(this.items[scrollIndex[i]], this.grid, 16)) {
       this.setActivePage(i);
       break;

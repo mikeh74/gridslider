@@ -15,6 +15,24 @@
             position: relative;
         }
 
+        .glider-grid-item {
+            background-color: blanchedalmond;
+            border-radius: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media screen and (min-width: 992px) {
+            .glider-col6 {
+                max-width: 50%;
+            }
+        }
+
+        .glider-col6 .glider-grid-item {
+            background-color: lightcoral;
+        }
+
         .glider img {
             width: 100%;
             height: 100%;
@@ -135,8 +153,9 @@
                 <div class="glider-grid-item">6</div>
             </div>
             <div class="glider-pager"></div>
-        </div>        <div class="glider">
-            <div class="glider-grid">
+        </div>
+        <div class="glider glider-col6">
+            <div class="glider-grid glider-grid-6-cols">
                 <div class="glider-grid-item">1</div>
                 <div class="glider-grid-item">2</div>
                 <div class="glider-grid-item">3</div>
