@@ -62,21 +62,52 @@ const onScrollEnd = function (element, func, ...args) {
   };
 };
 
-const _withinViewport = (element, parent, offset) => {
+/**
+ * Check whether an element is in the viewport based on it's position
+ * relative to the parent element. We are comparing the right edge of the
+ * element to the right edge of the parent element and the left edge of the
+ * element to the left edge of the parent element.
+ * 
+ * The offset is used to add a buffer to the comparison on the left edge of the
+ * parent element only.
+ * 
+ * @param {*} element - html element
+ * @param {*} parent - html element
+ * @param {*} offset - number
+ */
+const withinViewport = (element, parent, offset) => {
   offset = offset || 0;
   const elementRect = element.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
-
-  // factor in the offset so that the element is considered within the viewport
-  // even if it's slightly outside the viewport
-  // const left = parentRect.left + offset;
-  // const right = parentRect.right - offset;
 
   return (
     elementRect.left >= (parentRect.left - offset) &&
     elementRect.right <= parentRect.right
   );
 };
+
+
+/**
+ * Check whether an element is past a certain point in the viewport, we are
+ * comparing the left edge of the element to the left edge of the parent
+ * element.
+ * 
+ * @param {*} element - html element
+ * @param {*} parent 
+ * @param {*} offset 
+ * @returns 
+ */
+const itemLeftOfParent = (element, parent, offset) => {
+  offset = offset || 0;
+  const elementRect = element.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+
+  return (
+    elementRect.left <= (parentRect.left + offset)
+  );
+};
+
+
 
 /**
  * Object factory function to create a glider object
@@ -90,7 +121,7 @@ const glider = {};
  * and grid items.
  * @param {*} element 
  */
-glider.init = function ({ 
+glider.init = function ({
   element,
   gridSelector = '.glider-grid',
   pagerSelector = '.glider-pager',
@@ -193,32 +224,30 @@ glider.updateActivePage = function () {
   const scrollIndex = this.calculateScrollIndex();
 
   // if the last element is in view, set the active page to the last page
-  if (_withinViewport(this.items[this.items.length - 1], this.grid, 16)) {
+  if (withinViewport(this.items[this.items.length - 1], this.grid, 16)) {
     this.setActivePage(scrollIndex.length - 1);
     return;
   }
 
-  // for (let i = scrollIndex.length - 1; i >= 0; i--) {
-  //   if (_withinViewport(this.items[scrollIndex[i]], this.grid, 16)) {
-  //     this.setActivePage(i);
-  //     break;
-  //   }
-  // }
+  let activePage = 0;
 
   for (let i = 0; i < scrollIndex.length; i++) {
-    if (_withinViewport(this.items[scrollIndex[i]], this.grid, 16)) {
-      this.setActivePage(i);
-      break;
+    if (itemLeftOfParent(this.items[scrollIndex[i]], this.grid, 16)) {
+      activePage = i;
     }
   }
+  this.setActivePage(activePage);
 }
 
 glider.setActivePage = function (pageNumber) {
   const pagerItems = this.pager.querySelectorAll('.glider-pager-item');
-  pagerItems.forEach(item => {
-    item.classList.remove('active');
-  });
-  pagerItems[pageNumber].classList.add('active');
+
+  if (pagerItems.length > 0) {
+    pagerItems.forEach(item => {
+      item.classList.remove('active');
+    });
+    pagerItems[pageNumber].classList.add('active');
+  }
 }
 
 glider.initPager = function () {
@@ -229,26 +258,12 @@ glider.initPager = function () {
     that.updateActivePage();
   }, 250));
 
-  // this.populatePager();
   this.updatePager();
   this.updateActivePage();
   this.onScrollEnd();
 }
 
 glider.initScroll = function () {
-
-  // const throttle = function(func, limit) {
-  //   let inThrottle;
-  //   return function() {
-  //     const args = arguments;
-  //     const context = this;
-  //     if (!inThrottle) {
-  //       func.apply(context, args);
-  //       inThrottle = true;
-  //       setTimeout(() => inThrottle = false, limit);
-  //     }
-  //   };
-  // }
 
   const that = this;
   const throttledScrollHandler = throttle(function () {
@@ -266,20 +281,9 @@ glider.onScrollEnd = function () {
     that.updateActivePage();
   }
 
-  // const handlePagerOnScroll = () => {
-  //   that.updateActivePage();
-  // };
-
-  // throttled scroll listener
-  // const throttledScrollHandler = throttle(handlePagerOnScroll, 50);
-  // this.grid.addEventListener('scroll', throttledScrollHandler);
-
   onScrollEnd(this.grid, handleScrollEnd);
 };
 
-// glider.handleScrollEnd = function () {
-//   this.updateActivePage();
-// }
 
 /**
  * Creates a pager object with the given slider.
@@ -291,7 +295,7 @@ glider.onScrollEnd = function () {
  */
 const makeGlider = function (element) {
   const obj = Object.create(glider);
-  obj.init({element});
+  obj.init({ element });
   return obj;
 };
 
@@ -301,7 +305,7 @@ els.forEach(el => {
   makeGlider(el);
 });
 
-const initGlider = function ({sliderSelector='.glider'}) {
+const initGlider = function ({ sliderSelector = '.glider' } = {}) {
   const els = document.querySelectorAll(sliderSelector);
 
   els.forEach(el => {
