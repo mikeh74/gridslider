@@ -158,7 +158,7 @@ glider.generatePagerLinks = function () {
 
 glider.generatePagerLink = function (pageNumber, itemNumber) {
   const btn = document.createElement('button');
-  btn.classList.add('pager-item');
+  btn.classList.add('glider-pager-item');
   // btn.textContent = pageNumber;
   btn.setAttribute('aria-label', `Page ${pageNumber + 1}`);
   btn.setAttribute('data-page', pageNumber);
@@ -170,7 +170,7 @@ glider.updatePager = function () {
   const that = this;
   this.populatePager();
 
-  const pagerItems = this.pager.querySelectorAll('.pager-item');
+  const pagerItems = this.pager.querySelectorAll('.glider-pager-item');
   pagerItems.forEach(item => {
     item.addEventListener('click', function () {
       const i = item.getAttribute('data-item');
@@ -196,7 +196,7 @@ glider.updateActivePage = function () {
 }
 
 glider.setActivePage = function (pageNumber) {
-  const pagerItems = this.pager.querySelectorAll('.pager-item');
+  const pagerItems = this.pager.querySelectorAll('.glider-pager-item');
   pagerItems.forEach(item => {
     item.classList.remove('active');
   });

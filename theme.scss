@@ -61,30 +61,23 @@
     display: flex;
     gap: 0.5rem;
     justify-content: center;
-    margin-top: 1rem;
+    align-items: center;
+    margin: 0.5rem 0;
 
     &-item {
+        border: none;
         width: 1rem;
         height: 1rem;
-        background-color: #808080;
+        background-color: #d3d3d3;
         border-radius: 50%;
         cursor: pointer;
+
+        &:hover, &:focus {
+            outline: 2px solid #7d7d7d;
+        }
+        
+        &.active {
+            background-color: #a9a9a9;
+        }
     }
-}
-
-.pager-item {
-    border: none;
-    width: 1rem;
-    height: 1rem;
-    background-color: #d3d3d3;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.pager-item:hover, .pager-item:focus {
-    outline: 2px solid #7d7d7d;
-}
-
-.pager-item.active {
-    background-color: #a9a9a9;
 }
