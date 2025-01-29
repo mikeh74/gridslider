@@ -159,7 +159,8 @@ glider.generatePagerLinks = function () {
 glider.generatePagerLink = function (pageNumber, itemNumber) {
   const btn = document.createElement('button');
   btn.classList.add('pager-item');
-  btn.textContent = pageNumber;
+  // btn.textContent = pageNumber;
+  btn.setAttribute('aria-label', `Page ${pageNumber + 1}`);
   btn.setAttribute('data-page', pageNumber);
   btn.setAttribute('data-item', itemNumber);
   return btn;

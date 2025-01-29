@@ -66,7 +66,7 @@
     &-item {
         width: 1rem;
         height: 1rem;
-        background-color: gray;
+        background-color: #808080;
         border-radius: 50%;
         cursor: pointer;
     }
@@ -74,14 +74,17 @@
 
 .pager-item {
     border: none;
-    width: 2rem;
-    height: 2rem;
-    background-color: lightgray;
+    width: 1rem;
+    height: 1rem;
+    background-color: #d3d3d3;
     border-radius: 50%;
     cursor: pointer;
 }
 
-.pager-item.active {
-    background-color: darkgrey;
+.pager-item:hover, .pager-item:focus {
+    outline: 2px solid #7d7d7d;
 }
 
+.pager-item.active {
+    background-color: #a9a9a9;
+}
