@@ -87,6 +87,11 @@
     }
 }
 
+// xl: 1080 (6)
+// lg: 930 (4)
+// md: 690 (3)
+// sm: 510 (3.5)
+
 @supports (container-type: inline-size) {
 
     .glider-cq {
@@ -94,16 +99,24 @@
         container-name: glider-cq;
 
         .glider-grid {
-            @container glider-cq (min-width: 516px) {
-                grid-auto-columns: calc(97% / 3);
+            @container glider-cq (min-width: 510px) {
+                grid-auto-columns: calc(97% / 3.8);
             }
+
+            // @container glider-cq (min-width: 510px) {
+            //     grid-auto-columns: calc(96% / 3);
+            // }
         
-            @container glider-cq (min-width: 932px) {
+            @container glider-cq (min-width: 690px) {
+                grid-auto-columns: calc(96% / 3);
+            }
+
+            @container glider-cq (min-width: 930px) {
                 grid-auto-columns: calc(96% / 4);
             }
-    
-            @container glider-cq (min-width: 1140px) {
-                grid-auto-columns: calc(94% / 6);
+
+            @container glider-cq (min-width: 1080px) {
+                grid-auto-columns: 15.7%;
             }
         }
     }

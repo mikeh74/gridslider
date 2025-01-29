@@ -85,19 +85,24 @@
     container-type: inline-size;
     container-name: glider-cq;
   }
-  @container glider-cq (min-width: 516px) {
+  @container glider-cq (min-width: 510px) {
     .glider-cq .glider-grid {
-      grid-auto-columns: 32.3333333333%;
+      grid-auto-columns: 25.5263157895%;
     }
   }
-  @container glider-cq (min-width: 932px) {
+  @container glider-cq (min-width: 690px) {
+    .glider-cq .glider-grid {
+      grid-auto-columns: 32%;
+    }
+  }
+  @container glider-cq (min-width: 930px) {
     .glider-cq .glider-grid {
       grid-auto-columns: 24%;
     }
   }
-  @container glider-cq (min-width: 1140px) {
+  @container glider-cq (min-width: 1080px) {
     .glider-cq .glider-grid {
-      grid-auto-columns: 15.6666666667%;
+      grid-auto-columns: 15.7%;
     }
   }
 }
