@@ -3,7 +3,6 @@
     --glider-top-padding: 0.5rem;
     --glider-right-padding: calc((100% - 80rem) / 2 + 7.75rem);
     --glider-bottom-padding: 0.5rem;
-    /* --slider-left-padding: calc((100% - 80rem) / 2 + 1rem); */
     --glider-left-padding: 0;
     --glider-peek: 0.5;
     --glider-spacing: 1rem;
@@ -26,13 +25,11 @@
         padding: 0.5rem;
 
         &-item {
-            /* width: 200px; */
             height: auto;
             scroll-snap-align: start;
             aspect-ratio: 9 / 16;
         }
     }
-
 }
 
 .glider-mq {
@@ -99,13 +96,13 @@
         container-name: glider-cq;
 
         .glider-grid {
-            @container glider-cq (min-width: 510px) {
-                grid-auto-columns: calc(97% / 3.8);
-            }
-
             // @container glider-cq (min-width: 510px) {
-            //     grid-auto-columns: calc(96% / 3);
+            //     grid-auto-columns: calc(97% / 3.8);
             // }
+
+            @container glider-cq (min-width: 510px) {
+                grid-auto-columns: calc(96% / 3);
+            }
         
             @container glider-cq (min-width: 690px) {
                 grid-auto-columns: calc(96% / 3);

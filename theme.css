@@ -3,7 +3,6 @@
   --glider-top-padding: 0.5rem;
   --glider-right-padding: calc((100% - 80rem) / 2 + 7.75rem);
   --glider-bottom-padding: 0.5rem;
-  /* --slider-left-padding: calc((100% - 80rem) / 2 + 1rem); */
   --glider-left-padding: 0;
   --glider-peek: 0.5;
   --glider-spacing: 1rem;
@@ -26,7 +25,6 @@
   padding: 0.5rem;
 }
 .glider .glider-grid-item {
-  /* width: 200px; */
   height: auto;
   scroll-snap-align: start;
   aspect-ratio: 9/16;
@@ -87,7 +85,7 @@
   }
   @container glider-cq (min-width: 510px) {
     .glider-cq .glider-grid {
-      grid-auto-columns: 25.5263157895%;
+      grid-auto-columns: 32%;
     }
   }
   @container glider-cq (min-width: 690px) {
