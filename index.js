@@ -108,9 +108,8 @@ const itemLeftOfParent = (element, parent, offset) => {
 };
 
 
-
 /**
- * Object factory function to create a glider object
+ * Declare our glider object
  * 
  */
 const glider = {};
@@ -125,27 +124,32 @@ glider.init = function ({
   element,
   gridSelector = '.glider-grid',
   pagerSelector = '.glider-pager',
-  itemSelector = '.glider-grid-item' } = {}) {
+  itemSelector = '.glider-grid-item',
+  pagerItemClass = 'glider-pager-item' } = {}) {
 
   this.glider = element;
   this.grid = this.glider.querySelector(gridSelector);
-
   this.pager = this.glider.querySelector(pagerSelector);
+
+  // TODO what if elements are added dynaically to the collection
+  // how do we detect this (would we need mutation observer)
   this.items = this.grid.querySelectorAll(itemSelector);
+
+  this.pagerItemClass = pagerItemClass;
+  this.pagerItemSelector = `.${pagerItemClass}`;
 
   this.initPager();
   this.initScroll();
-
-  // this.scrollIndex = calculateScrollIndex(this.items);
-  // this.activePage = 0;
-  // this.initPager();
-  // this.initScroll();
 }
 
 glider.getNumberOfItems = function () {
   return this.items.length;
 }
 
+/**
+ * Calculate the number of displayed elements that should be visible in
+ * the viewport at this point.
+ */
 glider.getNumberOfItemsFullyVisible = function () {
   const computedStyle = getComputedStyle(this.grid);
   const gapSize = parseInt(computedStyle.gap, 10);
@@ -160,6 +164,18 @@ glider.getNumberOfPages = function () {
   return Math.ceil(totalItems / itemsFullyVisible);
 }
 
+/**
+ * This function returns a javascript array of elements which are a
+ * set number of items apart based on the number of elements which are
+ * currently visible in the viewport.
+ * 
+ * TODO: clarify this section
+ * The benefit of this is that the last index item might be an element which
+ * will never be fully to the left in the viewport but attempting to scroll
+ * to that position still works
+ *
+ * @returns array
+ */
 glider.calculateScrollIndex = function () {
   const numberOfPages = this.getNumberOfPages();
   let scrollIndex = [];
@@ -194,7 +210,7 @@ glider.generatePagerLinks = function () {
 
 glider.generatePagerLink = function (pageNumber, itemNumber) {
   const btn = document.createElement('button');
-  btn.classList.add('glider-pager-item');
+  btn.classList.add(this.pagerItemClass);
   // btn.textContent = pageNumber;
   btn.setAttribute('aria-label', `Page ${pageNumber + 1}`);
   btn.setAttribute('data-page', pageNumber);
@@ -206,7 +222,12 @@ glider.updatePager = function () {
   const that = this;
   this.populatePager();
 
-  const pagerItems = this.pager.querySelectorAll('.glider-pager-item');
+  // TODO: potentially refactor this out?
+  // once we've populate the pager we need to add the event listeners
+  // TODO could we not add the actual scroll position to the button when we 
+  // are setting it rather than calculate it here, so we can just get the
+  // position that we need to scroll to???
+  const pagerItems = this.pager.querySelectorAll(this.pagerItemSelector);
   pagerItems.forEach(item => {
     item.addEventListener('click', function () {
       const i = item.getAttribute('data-item');
@@ -229,8 +250,11 @@ glider.updateActivePage = function () {
     return;
   }
 
+  // set active page to 0
   let activePage = 0;
 
+  // loop through our scrollIndex and check each one to see if it is to the 
+  // left of the parent element (or within the buffer zone)
   for (let i = 0; i < scrollIndex.length; i++) {
     if (itemLeftOfParent(this.items[scrollIndex[i]], this.grid, 16)) {
       activePage = i;
@@ -240,7 +264,7 @@ glider.updateActivePage = function () {
 }
 
 glider.setActivePage = function (pageNumber) {
-  const pagerItems = this.pager.querySelectorAll('.glider-pager-item');
+  const pagerItems = this.pager.querySelectorAll(this.pagerItemSelector);
 
   if (pagerItems.length > 0) {
     pagerItems.forEach(item => {
@@ -250,13 +274,18 @@ glider.setActivePage = function (pageNumber) {
   }
 }
 
+/**
+ * Initialise the pager
+ */
 glider.initPager = function () {
   const that = this;
 
+  // attach event listener for resize event
   window.addEventListener('resize', debounce(function () {
     that.updatePager();
     that.updateActivePage();
   }, 250));
+
 
   this.updatePager();
   this.updateActivePage();
@@ -276,14 +305,11 @@ glider.onScrollEnd = function () {
   const that = this;
 
   const handleScrollEnd = () => {
-    console.log('scroll end');
-    that.isSliding = false;
     that.updateActivePage();
   }
 
   onScrollEnd(this.grid, handleScrollEnd);
 };
-
 
 /**
  * Creates a pager object with the given slider.
