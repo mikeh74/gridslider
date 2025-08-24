@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "sass theme.scss theme.css",
-    "watch": "sass -w theme.scss theme.css",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "sass -w theme.scss theme.css"
   },
   "repository": {
     "type": "git",
